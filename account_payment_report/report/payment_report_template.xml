@@ -1,0 +1,211 @@
+<odoo>
+    <data>
+        <template id="payment_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <table style="width:100%;direction:ltr;" class="table table-bordered">
+                        <blockqoute>
+                            <div class="col-xs-12 text-center">
+                                <h3>كشف حركــة الخزينة</h3>
+                                <h5>
+                                    في
+                                    <span t-esc="selected_date"/>
+                                </h5>
+                            </div>
+                            <tr style="background-color:#D0D0D0;height:40px;">
+                                <th style="text-align:left;color:black">البيان</th>
+                                <th style="text-align:left;color:black">رقم السند</th>
+                                <th style="text-align:right;color:black" colspan="2">شيكات</th>
+                                <th style="text-align:right;color:black" colspan="2">نقدآ</th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <h5>البيان</h5>
+                                </th>
+                                <th>
+                                    <h5>رقم السند</h5>
+                                </th>
+                                <th style="background-color:#efeded;text-align:right;">
+                                    <h5>منصرف</h5>
+                                </th>
+                                <th style="text-align:right;">
+                                    <h5>وارد</h5>
+                                </th>
+                                <th style="background-color:#efeded;text-align:right;">
+                                    <h5>منصرف</h5>
+                                </th>
+                                <th style="text-align:right;">
+                                    <h5>وارد</h5>
+                                </th>
+                            </tr>
+                        </blockqoute>
+                        <div class="page">
+                            <div class="text-center">
+                                <tr>
+                                    <t t-set="total_one" t-value="0.0"/>
+                                    <t t-set="total_two" t-value="0.0"/>
+                                    <t t-set="total_three" t-value="0.0"/>
+                                    <t t-set="total_four" t-value="0.0"/>
+                                    <t t-set="total_five" t-value="0.0"/>
+                                    <t t-set="total_sex" t-value="0.0"/>
+                                    <t t-set="all_total" t-value="0.0"/>
+                                    <t t-foreach="get_payments(selected_date)" t-as="line">
+                                        <tr>
+                                            <td style="text-align:left;">
+                                                <span t-esc="line['communication']"/>
+                                            </td>
+                                            <td style="text-align:left;">
+                                                <span t-esc="line['name']"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="line['payment_method']=='check'">
+                                                    <t t-if="line['payment_type']=='outbound'">
+                                                        <span t-esc="line['amount']"/>
+                                                        <t t-set="total_one" t-value="total_one + line['amount'] "/>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="line['payment_method']=='check'">
+                                                    <t t-if="line['payment_type']=='inbound'">
+                                                        <span t-esc="line['amount']"/>
+                                                        <t t-set="total_two" t-value="total_two + line['amount'] "/>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="line['payment_method']=='cash'">
+                                                    <t t-if="line['payment_type']=='outbound'">
+                                                        <span t-esc="line['amount']"/>
+                                                        <t t-set="total_three" t-value="total_three + line['amount'] "/>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="line['payment_method']=='cash'">
+                                                    <t t-if="line['payment_type']=='inbound'">
+                                                        <span t-esc="line['amount']"/>
+                                                        <t t-set="total_four" t-value="total_four + line['amount'] "/>
+                                                    </t>
+                                                </t>
+                                            </td>
+
+                                        </tr>
+
+                                        <t t-set="all_total" t-value="all_total +line['amount'] "/>
+                                    </t>
+
+                                    <tr style="background-color:#D0D0D0;">
+
+
+                                        <td style="text-align:right;" colspan="2">
+                                            <strong>
+                                                رصيــد أخر اليــوم
+                                            </strong>
+
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_one"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_two"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_three"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+
+                                        <td style="text-align:right;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_four"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+
+                                        <t t-set="total_sex" t-value="total_four - total_three"/>
+                                        <t t-set="total_five" t-value="total_two - total_one"/>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3"></td>
+
+                                        <td style="text-align:right;background-color:#D0D0D0;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_five"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+
+                                        <td></td>
+
+                                        <td style="text-align:right;background-color:#D0D0D0;">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="total_sex"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+
+                                    </tr>
+                                </tr>
+                            </div>
+                        </div>
+                    </table>
+                    <table class="table" style="direction:rtl;">
+                        <tr>
+                            <td style="text-align:right;" width="10%">
+                                <table class="table"
+                                       style="border-spacing:0;margin-bottom:0;height: 40px; width: 120px; border: 2px solid black; direction:rtl;background-color:#D0D0D0">
+                                    <td>
+                                        <th style="text-align:right;">
+                                            <span>
+                                                <t t-esc="total_sex"/>
+                                            </span>
+
+                                        </th>
+                                    </td>
+                                </table>
+                            </td>
+                            <td>
+                                <th>
+                                    <h5 style="text-align:right;">اجمالي المبلغ بعد خصم العهد والمعلقات ()</h5>
+                                </th>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table table-striped">
+                        <br ></br>
+                        <br></br>
+                        <br></br>
+                        <br></br>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-left">المدير التنفيذي</th>
+                                <th scope="col">المدير المالي</th>
+                                <th scope="col" class="text-right">أمين الصندوق</th>
+                            </tr>
+
+
+                        </thead>
+                    </table>
+
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
+        <!-- <span t-esc="line['partner_name']"/> -->
